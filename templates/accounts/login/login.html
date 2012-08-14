@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    : Log In
+{% endblock %}
+
+{% block content_col %}
+
+    <div>
+      <form method='post' action='./' class="form-inline">
+        {% csrf_token %}
+        <input type="text" class="input-small" name="username" maxlength="30" placeholder="Username">
+        <input type="password" class="input-small" name="password" placeholder="Password">
+        <input type='submit' value='Log In' /></p>
+        <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}/{% endif %}" />
+      </form>
+      {% if form.errors %}<p class="required">Your username and password didn't match. Please try again.</p>{% endif %}
+    </div>
+
+    <div>
+        Or register: 
+    </div>
+
+{% endblock %}
+

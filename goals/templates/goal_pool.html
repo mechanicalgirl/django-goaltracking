@@ -1,0 +1,11 @@
+{% if goalpool %}
+<div style="padding-left: 10px;">
+  <!-- <h3>Your idea list:</h3> -->
+  <ul>
+  {% for goal in goalpool %}
+    <li style="list-style: none;"><i class="icon-plus"></i> {{ goal.name }}: {{ goal.description }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+

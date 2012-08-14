@@ -1,0 +1,23 @@
+<div class="date_goal">
+  <h3>Goal: {{ date.date_three.goal }}</h3>
+</div>
+
+<div class="date_goal_add">
+{% if not date.complete %}
+   {% if activityform %}
+     <form action="/goals/addactivity/{{date.date_three.id}}/" method="post" style="border: 0px solid red; text-align: left;">
+     {% csrf_token %}
+     {{ activityform.description }}<br />
+     <input type="submit" value="ADD AN ACTIVITY" />
+     </form>
+  {% endif %}
+{% endif %}
+</div>
+
+<div class="date_goal_activities">
+  {% load activity_tags %}
+  {% for activity in date.date_three.id|date_activity %}
+  {{ activity }}<br>
+  {% endfor %}
+</div>
+

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    : Summary
+{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content_col %}
+
+  {% if goal %}
+
+    Goal: {{ goal.name }}<br>
+    Description: {{ goal.description }}<br>
+
+  {% endif %}
+
+{% endblock %}
+

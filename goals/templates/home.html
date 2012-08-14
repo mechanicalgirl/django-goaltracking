@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block page_title %}{% endblock %}
+
+{% block content_col %}
+
+  {% if goalset %}
+
+    {% if dates %}
+      {% for date in dates %}
+        <br clear="all">
+        <div class="date_outline">
+          <div class="left">
+            <h2>Week {{ date.date_one.week }}, Day {{ date.date_one.day }} - {{ date.date_one.activity_date|date:"F d, Y" }}</h2>
+          </div>
+          <div class="right">
+            {% load quote_tags %}
+            <em>{% daily_quote date.date_one.week date.date_one.day %}</em>
+          </div>
+          <div class="clear"></div>
+          <div class="left quarter">{% include "goal_one.html" %}</div>
+          <div class="left quarter">{% include "goal_two.html" %}</div>
+          <div class="left quarter">{% include "goal_three.html" %}</div>
+          <div class="left quarter">{% include "goal_four.html" %}</div>
+          <div class="clear"></div>
+          <br clear="all">
+
+          {% if not date.complete %}
+            {% if datesetform %}
+              <form action="/goals/closedateset/{{date.id}}/" method="post" style="text-align: left;">
+                {% csrf_token %}
+                <input type='hidden' name='finished' value='True' />
+                <input type="submit" value="Click here to mark {{ date.date_one.activity_date|date:"F d, Y" }} COMPLETE" />
+              </form>
+            {% endif %}
+          {% else %}
+            <h4>{{ date.date_one.activity_date|date:"F d, Y" }} is COMPLETE</h4>
+          {% endif %}
+          <hr>
+        </div> <!-- end date_outline -->
+      {% endfor %}
+    {% endif %}
+
+  {% else %}
+
+    {% if ready %}
+
+        {% if getstarted %}
+          <div class="left twothird">
+            {% include "goal_choose.html" %}
+          </div>
+        {% else %}
+          <div class="left half">
+            {% include "goal_list.html" %}
+            {% include "goal_pool.html" %}
+          </div>
+        {% endif %}
+
+        {% if getstarted %}
+          <div class="right onethird">
+            {% include "goal_pool.html" %}
+          </div>
+        {% else %}
+          <div class="right half">
+            {% include "goal_add_form.html" %}
+          </div>
+        {% endif %}
+        <div class="clear"></div>
+
+    {% else %}
+
+      <div class="left half">
+        {% include "goal_list.html" %}
+        {% include "goal_pool.html" %}
+      </div>
+      <div class="right half">
+        {% include "goal_add_form.html" %}
+      </div>
+      <div class="clear"></div>
+
+    {% endif %}
+
+  {% endif %}
+
+{% endblock %}
+

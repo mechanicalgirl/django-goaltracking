@@ -1,0 +1,39 @@
+.clear { clear: both; }
+.left { float: left; }
+.right { float: right; }
+
+.half { width: 49%; }
+.quarter { width: 22%; padding: 10px; }
+.threequarters { width: 75%; padding: 5px; }
+.onethird { width: 30%; padding: 5px; }
+.twothird { width: 60%; padding: 5px; }
+
+.visible { display: block; }
+.hidden { display: none; }
+.invisible { opacity: 0; }
+.inactive { color: #333; }
+
+.required { font-weight: bold; color: red; }
+
+.date_outline { border: 0px solid red; }
+.date_goal { margin: 10px; }
+.date_goal_add { margin: 10px; }
+.date_goal_activities { margin: 10px; }
+
+.sum_label { float: left; font-weight: bold; text-align: center; font-size: 16px;  }
+.sum_week_label { width: 75px; }
+.sum_day_label { width: 75px; }
+.sum_date_label { width: 150px; }
+.sum_goal_label { width: 150px; }
+
+.sum { float: left; text-align: center; font-size: 14px; }
+.sum_week { width: 75px; }
+.sum_day { width: 75px; }
+.sum_date { width: 150px; }
+.sum_goal { width: 150px; }
+
+#id_goal_one { width: 100px; }
+#id_goal_two { width: 100px; }
+#id_goal_three { width: 100px; }
+#id_goal_four { width: 100px; }
+

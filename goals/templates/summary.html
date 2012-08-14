@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    : Summary
+{% endblock %}
+
+{% block content_col %}
+
+  {% if goalset %}
+
+    <div class="date_outline" style="margin-top: 10px;">
+    <h2 style="color: gray;">{{ percent_complete|floatformat:1 }} percent complete!</h2>
+    <br clear="all">
+    <div class="sum_label sum_goal_label">{{ goalset.goal_one }}</div>
+    <div class="sum_label sum_goal_label">{{ goalset.goal_two }}</div>
+    <div class="sum_label sum_goal_label">{{ goalset.goal_three }}</div>
+    <div class="sum_label sum_goal_label">{{ goalset.goal_four }}</div>
+    <div class="sum_label sum_week_label">Week</div>
+    <div class="sum_label sum_day_label">Day</div>
+    <div class="sum_label sum_date_label">Date</div>
+    <div class="clear"></div>
+
+    {% if dates %}
+      {% for date in dates %}
+        <div class="sum sum_goal">{% if date.complete %} <a href="/goals/summary/{{ goalset.goal_one.id }}/" target="new">&#10003;</a> {% else %} &nbsp; {% endif %}</div>
+        <div class="sum sum_goal">{% if date.complete %} <a href="/goals/summary/{{ goalset.goal_two.id }}/" target="new">&#10003;</a> {% else %} &nbsp; {% endif %}</div>
+        <div class="sum sum_goal">{% if date.complete %} <a href="/goals/summary/{{ goalset.goal_three.id }}/" target="new">&#10003;</a> {% else %} &nbsp; {% endif %}</div>
+        <div class="sum sum_goal">{% if date.complete %} <a href="/goals/summary/{{ goalset.goal_four.id }}/" target="new">&#10003;</a> {% else %} &nbsp; {% endif %}</div>
+        <div class="sum sum_week">{{ date.date_one.week }}</div>
+        <div class="sum sum_day">{{ date.date_one.day }}</div>
+        <div class="sum sum_date">{{ date.date_one.activity_date|date:"F d, Y" }}</div>
+        <div class="clear"></div>
+      {% endfor %}
+    {% endif %}
+    </div>
+    <br clear="all">
+
+  {% endif %}
+
+{% endblock %}
+

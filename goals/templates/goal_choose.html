@@ -1,0 +1,62 @@
+<h3>Are you ready to choose four goals and get started?</h3>
+<div style="margin-top: 10px;">
+<p>Now it's time to use this list to select the four goals that you will focus on for the next twelve weeks.</p>
+<p>Why four?  This is going to be a lot of work, a lot of tracking, and a lot of commitment.  Any more than four goals and you might easily distract yourself by bouncing from one to another.  Perhaps pick one goal that's long-term and three that are short-term.</p>
+<p>To help you make your decision, think about the 'why'.  For each goal, consider what's in it for you and the people you care about.  What happens to you if you reach this goal?  If you can't come up with something, the goal may not be worth considering.  A goal you don't care about is a goal you won't work hard to reach.</p>
+<p>Consider balance as well.  If all of your goals are about work, your physical needs and family could suffer.  If you've got lots of goals about spending money but none about making it, you could run into trouble.</p>
+<p>Make sure the four goals on your final list are the ones you can live with, the ones that will take over your life - in a good way.</p>
+</div>
+
+<form action="/goals/goalset/" method="post" class="well form-horizontal">
+  <fieldset>
+  {% csrf_token %}
+
+  <div class="left half">
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal One:</label>
+      <div class="controls">
+        {{ setform.goal_one }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Two:</label>
+      <div class="controls">
+        {{ setform.goal_two }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Three:</label>
+      <div class="controls">
+        {{ setform.goal_three }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Four:</label>
+      <div class="controls">
+        {{ setform.goal_four }}
+      </div>
+    </div>
+  </div>
+
+  <div class="left half">
+    <p>Once that you've got your final four, it's worth taking a few minutes to decide if you're serious, if these are the things worth reorganizing your life around.</p>
+    <p>That little noise in your voice might be fear -- it might be the voice of resistance, a bit afraid of what might be to come -- or ... and it's a big or ... it might be your true self saying "You know, that's not really what I want, that's what someone else wants."</p>
+    <p>Sleep on it.</p>
+    <p>Figure out how serious you are before you settle on these four goals, because once you commit, things will happen.</p>
+  </div>
+  <div class="clear"></div>
+
+  <div class="form-actions" style="margin: 0; padding-bottom: 0;">
+    <button type="submit" class="btn btn-primary" name="commit" value="commit">COMMIT</button>
+    <button class="btn" name="goback" value="goback">Or turn back now!</button>
+  </div>
+
+  {% if request.session.goal_set_errors %}
+    {% for key, value in request.session.goal_set_errors.items %}
+      <span class="required">{{ value }}</span>
+    {% endfor %}
+  {% endif %}
+
+  </fieldset>
+</form>
+
