@@ -1,4 +1,5 @@
-<div style="padding: 10px;">
+<div style="width: 500px;">
+
   <form action="/goals/goaladd/" method="post" class="form-horizontal well" style="padding-bottom: 0;">
     <fieldset>
       {% csrf_token %}
@@ -13,7 +14,7 @@
       <div class="control-group">
         <label class="control-label">Description:</label>
         <div class="controls">
-          <input id="id_description" name="description" maxlength="255" type="text">
+          <input id="id_description" name="description" maxlength="200" type="text">
         </div>
       </div>
 
@@ -26,11 +27,13 @@
         {% endif %}
       </div>
 
+      <div class="control-group" style="height: 30px;">
       {% if request.session.goal_add_errors %}
         {% for key, value in request.session.goal_add_errors.items %}
           <span class="required">{{ value }}</span>
         {% endfor %}
       {% endif %}
+      </div>
 
     </fieldset>
   </form>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django-goaltracking.goals.models import Goal, Goalset, Date, Dateset, Activity, Quote
+from goals.models import Goal, Goalset, Date, Dateset, Activity, Quote
 
 class GoalAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'name', 'complete')

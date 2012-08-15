@@ -15,8 +15,8 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db import DatabaseError, IntegrityError
 
-from django-goaltracking.goals.models import Goal, Goalset, Date, Dateset, Activity
-from django-goaltracking.goals.forms import GoalForm, GoalsetForm, DateForm, DatesetForm, ActivityForm
+from goals.models import Goal, Goalset, Date, Dateset, Activity
+from goals.forms import GoalForm, GoalsetForm, DateForm, DatesetForm, ActivityForm
 
 @login_required
 def show_home(request):

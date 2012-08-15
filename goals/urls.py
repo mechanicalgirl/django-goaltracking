@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.views.generic.simple import direct_to_template
 
-from django-goaltracking.goals import views
+from goals import views
 
 urlpatterns = patterns('',
     url(r'^closedateset/(?P<id>\w+)/*$',        views.close_dateset,    name='close_dateset'),

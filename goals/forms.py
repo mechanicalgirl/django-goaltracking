@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
-from django-goaltracking.goals.models import Goal, Goalset, Date, Dateset, Activity
+from goals.models import Goal, Goalset, Date, Dateset, Activity
 
 class GoalForm(forms.ModelForm):
     name = forms.CharField(label='Goal Name', widget=forms.TextInput, error_messages={'required': 'Please enter a name for your goal.'}, max_length=255)

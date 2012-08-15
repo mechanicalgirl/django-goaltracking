@@ -1,0 +1,30 @@
+<br clear="all">
+<div class="date_outline">
+  <div class="left">
+    <h2>Week {{ date.date_one.week }}, Day {{ date.date_one.day }} - {{ date.date_one.activity_date|date:"F d, Y" }}</h2>
+    <br clear="all">
+    {% if not date.complete %}
+      {% if datesetform %}
+        <form action="/goals/closedateset/{{date.id}}/" method="post" style="text-align: left;">
+          {% csrf_token %}
+          <input type='hidden' name='finished' value='True' />
+          <button class="btn btn-primary">Click here to mark Week {{ date.date_one.week }}, Day {{ date.date_one.day }} COMPLETE</button>
+        </form>
+      {% endif %}
+    {% else %}
+      <h4>{{ date.date_one.activity_date|date:"F d, Y" }} is COMPLETE</h4>
+    {% endif %}
+  </div>
+  <div class="right">
+	{% load quote_tags %}
+	<em>{% daily_quote date.date_one.week date.date_one.day %}</em>
+  </div>
+  <div class="clear"></div>
+  <div class="left quarter">{% include "goal_one.html" %}</div>
+  <div class="left quarter">{% include "goal_two.html" %}</div>
+  <div class="left quarter">{% include "goal_three.html" %}</div>
+  <div class="left quarter">{% include "goal_four.html" %}</div>
+  <div class="clear"></div>
+  <hr>
+</div> <!-- end date_outline -->
+

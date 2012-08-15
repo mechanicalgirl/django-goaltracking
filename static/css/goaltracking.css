@@ -4,9 +4,8 @@
 
 .half { width: 49%; }
 .quarter { width: 22%; padding: 10px; }
-.threequarters { width: 75%; padding: 5px; }
-.onethird { width: 30%; padding: 5px; }
-.twothird { width: 60%; padding: 5px; }
+.onethird { width: 35%; }
+.twothird { width: 60%; }
 
 .visible { display: block; }
 .hidden { display: none; }
