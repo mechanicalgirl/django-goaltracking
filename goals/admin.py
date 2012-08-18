@@ -1,5 +1,6 @@
 from django.contrib import admin
-from goals.models import Goal, Goalset, Date, Dateset, Activity, Quote
+
+from goals.models import Goal, Goalset, Date, Dateset, Activity, Quote, Copy
 
 class GoalAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'name', 'complete')
@@ -23,9 +24,15 @@ class QuoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'week', 'day', 'quote',)
     ordering = ('week', 'day',)
 
+class CopyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'content',)
+    ordering = ('name',)
+
 admin.site.register(Goal, GoalAdmin)
 admin.site.register(Goalset, GoalsetAdmin)
 admin.site.register(Date, DateAdmin)
 admin.site.register(Dateset, DatesetAdmin)
 admin.site.register(Activity, ActivityAdmin)
 admin.site.register(Quote, QuoteAdmin)
+admin.site.register(Copy, CopyAdmin)
+

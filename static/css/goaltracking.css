@@ -57,3 +57,9 @@ a.tip span {
 a:hover.tip { font-size: 99%; /* this is just for IE */ }
 a:hover.tip span { display: block; }
 
+#section-home #nav-home { color: red; }
+#section-sum #nav-sum { color: red; }
+#section-about #nav-about { color: red; }
+#section-cont #nav-cont { color: red; }
+#section-prof #nav-prof { color: red; }
+

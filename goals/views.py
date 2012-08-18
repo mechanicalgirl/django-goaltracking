@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db import DatabaseError, IntegrityError
 
-from goals.models import Goal, Goalset, Date, Dateset, Activity
+from goals.models import Goal, Goalset, Date, Dateset, Activity, Copy
 from goals.forms import GoalForm, GoalsetForm, DateForm, DatesetForm, ActivityForm
 
 @login_required
@@ -56,6 +56,11 @@ def show_home(request):
             goalpool = None
 
     else:
+        ## TODO: plan for completed goal sets
+        ## when there are no goals left, let the user mark the set as complete
+        ## add a completed date to the goalset object
+        ## update included goal objects to complete=True
+
         today = datetime.now().date()
         dates = Dateset.objects.filter(
             Q(date_one__activity_date__lte=today, complete=False) | 

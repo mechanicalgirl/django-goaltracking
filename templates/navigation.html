@@ -1,0 +1,25 @@
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <a class="brand">&nbsp;Goal Tracking</a>
+    <div class="nav-collapse">
+      <ul class="nav">
+        <li id="nav-home"><a href="/">Home</a></li>
+        {% if user.id %}
+	<li><a href="/goals/summary/" id="nav-sum">Summary</a></li>
+	{% endif %}
+	<li><a href="/about/" id="nav-about">About</a></li>
+	<li><a href="/contact/" id="nav-cont">Contact</a></li>
+	{% if user.is_superuser and user.is_staff %}
+	<li><a href="/admin/">ADMIN</a></li>
+	{% endif %}
+	{% if user.id %}
+	<li style="width: 250px;">&nbsp;</li>
+	<li><a>Welcome, {{ user.username }}</a></li>
+	<li><a href="/profile/{{ user.username }}/" id="nav-prof">Your Profile</a></li>
+	<li><a href="/accounts/logout/">Log Out</a></li>
+	{% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+

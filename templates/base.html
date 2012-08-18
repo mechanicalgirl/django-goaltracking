@@ -19,32 +19,9 @@
 <body>
 
 {% block header %}
-<div>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-          <a class="brand">&nbsp;Goal Tracking</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="/">Home</a></li>
-              {% if user.id %}
-                <li><a href="/goals/summary/">Summary</a></li>
-              {% endif %}
-                <li><a href="/about/">About</a></li>
-                <li><a href="/contact/">Contact</a></li>
-              {% if user.is_superuser and user.is_staff %}
-                <li><a href="/admin/">ADMIN</a></li>
-              {% endif %}
-              {% if user.id %}
-                <li style="width: 250px;">&nbsp;</li>
-                <li><a>Welcome, {{ user.username }}</a></li>
-                <li><a href="/profile/{{ user.username }}/">Your Profile</a></li>
-                <li><a href="/accounts/logout/">Log Out</a></li>
-              {% endif %}
-            </ul>
-        </div>
-      </div>
-    </div>
-</div>
+  {% block navigation %}
+    {% include "navigation.html" %}
+  {% endblock %}
 {% endblock %}
 
 <div class="container-fluid">

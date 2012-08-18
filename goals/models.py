@@ -52,7 +52,7 @@ class Goalset(models.Model):
     class Meta:
         ordering = ["active_date"]
         unique_together = ("goal_one","goal_two","goal_three","goal_four",)
-
+        verbose_name_plural = "Goal Sets"
 
 class Date(models.Model):
     goal = models.ForeignKey(Goal)
@@ -89,6 +89,7 @@ class Dateset(models.Model):
 
     class Meta:
         unique_together = ("date_one","date_two","date_three","date_four")
+        verbose_name_plural = "Date Sets"
 
 
 class Activity(models.Model):
@@ -105,6 +106,7 @@ class Activity(models.Model):
 
     class Meta:
         ordering = ["date"]
+        verbose_name_plural = "Activities"
 
 
 class Quote(models.Model):
@@ -118,4 +120,16 @@ class Quote(models.Model):
     class Meta:
         ordering = ['week', 'day']
         unique_together = ('week','day',)
+
+
+class Copy(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    content = models.TextField()
+
+    def __unicode__(self):
+        return u"%s" % (self.name)
+
+    class Meta:
+        ordering = ['name',]
+        verbose_name_plural = "Static Copy"
 

@@ -28,7 +28,8 @@
         {% else %}
 
           <div class="left half">
-            {% include "goal_make_list.html" %}
+            {% load copy_tags %}
+            {% static_copy 'goal_makelist' %}
           </div>
           <div class="right half">
             {% include "goal_add_form.html" %}
@@ -41,7 +42,8 @@
     {% else %}
 
       <div class="left half">
-        {% include "goal_make_list.html" %}
+        {% load copy_tags %}
+        {% static_copy 'goal_makelist' %}
         {% include "goal_pool.html" %}
       </div>
       <div class="right half">

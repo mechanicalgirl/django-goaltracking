@@ -30,10 +30,6 @@
         <div class="sum sum_day">{{ dateset.date_one.day }}</div>
         <div class="sum sum_date">
           {% if dateset.complete %}
-            <!-- <a href="/goals/summary/{{ dateset.id }}/" target="goal" 
-                 onclick="window.open('/goals/summary/{{ dateset.id }}/','goal','height=450,width=450,location=no'); 
-                 return false;">{{ dateset.date_one.activity_date|date:"F d, Y" }}</a> -->
-
             {% load activity_tags %}
             <a class="tip">
               {{ dateset.date_one.activity_date|date:"F d, Y" }}
