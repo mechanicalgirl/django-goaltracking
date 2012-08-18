@@ -80,9 +80,18 @@ def show_summary(request, id=None):
     if id:
         template_name = 'goal_summary.html'
         try:
-            goal = Goal.objects.get(pk=id)
-            context['goal'] = goal
+            dateset = Dateset.objects.get(pk=id)
+            ## TODO: clean this up:
+            date_one = Date.objects.get(pk=dateset.date_one_id)
+            context['act_one'] = Activity.objects.filter(date=date_one.id)
+            date_two = Date.objects.get(pk=dateset.date_two_id)
+            context['act_two'] = Activity.objects.filter(date=date_two.id)
+            date_three = Date.objects.get(pk=dateset.date_three_id)
+            context['act_three'] = Activity.objects.filter(date=date_three.id)
+            date_four = Date.objects.get(pk=dateset.date_four_id)
+            context['act_four'] = Activity.objects.filter(date=date_four.id)
         except ObjectDoesNotExist:
+           ## TODO: redirect to an error page
            return HttpResponseRedirect('/')
 
     else:
@@ -96,10 +105,10 @@ def show_summary(request, id=None):
         if goalset:  # user has a goal set in progress
             context['goalset'] = goalset
 
-            dates_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
-            dates_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
-            context["dates"] = dates_total
-            context["percent_complete"] = 100 * float(len(dates_complete)) / float(len(dates_total))
+            datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
+            datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+            context["datesets"] = datesets_total
+            context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
@@ -172,11 +181,20 @@ def goal_add(request):
                 obj = form.save(commit=False)
                 obj.user = request.user
                 obj.save()
-                return HttpResponseRedirect('/')
             else:
                 errors = dict(form.errors.items()) 
                 request.session['goal_add_errors'] = errors
-                return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/')
+
+
+@login_required
+def goal_remove(request,id):
+    template_name = 'home.html'
+    if request.method == 'POST':
+        if 'remove' in request.POST:
+            u = Goal.objects.get(pk=id).delete()
+            return HttpResponseRedirect('/')
     return HttpResponseRedirect('/')
 
 @login_required

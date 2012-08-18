@@ -28,11 +28,13 @@
               <li class="active"><a href="/">Home</a></li>
               {% if user.id %}
                 <li><a href="/goals/summary/">Summary</a></li>
-                <li><a href="/goals/about/">About</a></li>
+              {% endif %}
+                <li><a href="/about/">About</a></li>
                 <li><a href="/contact/">Contact</a></li>
-                {% if user.is_superuser and user.is_staff %}
-                  <li><a href="/admin/">ADMIN</a></li>
-                {% endif %}
+              {% if user.is_superuser and user.is_staff %}
+                <li><a href="/admin/">ADMIN</a></li>
+              {% endif %}
+              {% if user.id %}
                 <li style="width: 250px;">&nbsp;</li>
                 <li><a>Welcome, {{ user.username }}</a></li>
                 <li><a href="/profile/{{ user.username }}/">Your Profile</a></li>

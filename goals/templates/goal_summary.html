@@ -8,12 +8,38 @@
 
 {% block content_col %}
 
-  {% if goal %}
-
-    Goal: {{ goal.name }}<br>
-    Description: {{ goal.description }}<br>
-
+  {% if act_one %}
+    <p>
+    {% for act in act_one %}
+      {{ act.date.goal.name }}: {{ act.description }}<br>
+    {% endfor %}
+    </p>
   {% endif %}
+
+  {% if act_two %}
+    <p>
+    {% for act in act_two %}
+      {{ act.date.goal.name }}: {{ act.description }}<br>
+    {% endfor %}
+    </p>
+  {% endif %}
+
+  {% if act_three %}
+    <p>
+    {% for act in act_three %}
+      {{ act.date.goal.name }}: {{ act.description }}<br>
+    {% endfor %}
+    </p>
+  {% endif %}
+
+  {% if act_four %}
+    <p>
+    {% for act in act_four %}
+      {{ act.date.goal.name }}: {{ act.description }}<br>
+    {% endfor %}
+    </p>
+  {% endif %}
+
 
 {% endblock %}
 

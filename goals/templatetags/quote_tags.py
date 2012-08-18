@@ -1,7 +1,7 @@
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
 
-from django-goaltracking.goals.models import Quote
+from goals.models import Quote
 
 register = template.Library()
 

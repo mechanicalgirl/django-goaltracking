@@ -5,7 +5,7 @@
 <div class="date_goal_add">
 {% if not date.complete %}
    {% if activityform %}
-     <form action="/goals/addactivity/{{date.date_one.id}}/" method="post" style="border: 0px solid red; text-align: left;">
+     <form action="/goals/addactivity/{{date.date_one.id}}/" method="post">
      {% csrf_token %}
      {{ activityform.description }}<br />
      <input type="submit" value="ADD AN ACTIVITY" />

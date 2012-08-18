@@ -12,19 +12,16 @@
 
       <td>
       {% if not getstarted %}
-        <form>
+        <form action="/goals/goalremove/{{ goal.id }}" method="post" class="form-horizontal" style="padding-bottom: 0;">
+          {% csrf_token %}
           <button type="submit" class="btn btn-primary" name="remove" value="remove">X</button>
         </form>
       {% endif %}
       </td>
 
-      <td>
-        <b>{{ goal.name }}</b>:
-      </td>
+      <td><b>{{ goal.name }}</b></td>
 
-      <td>
-        {{ goal.description }}
-      </td>
+      <td>{{ goal.description }}</td>
 
     </tr>
   {% endfor %}
