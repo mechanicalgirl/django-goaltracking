@@ -120,10 +120,10 @@ def show_summary(request, id=None):
 @login_required
 def goal_set(request):
     template_name = 'home.html'
-    try:
-        del request.session['goal_set_errors']
-    except KeyError:
-        pass
+
+    try: del request.session['goal_set_errors']
+    except KeyError: pass
+
     if request.method == 'POST': 
         if 'goback' in request.POST:
             return HttpResponseRedirect('/')

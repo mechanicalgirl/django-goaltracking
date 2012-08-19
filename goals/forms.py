@@ -16,14 +16,19 @@ class GoalForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        name = cleaned_data['name']
-        try:
-            existing_name = Goal.objects.get(name__iexact=name, user=self.user)
-        except:
-            existing_name = False
 
-        if name and existing_name:
-            raise forms.ValidationError("You have already created a goal with this name.")
+        name = cleaned_data.get('name')
+        if name is None:
+            raise forms.ValidationError("Please enter a name for your goal.")
+        else:
+            name = cleaned_data['name']
+            try:
+                existing_name = Goal.objects.get(name__iexact=name, user=self.user)
+            except:
+                existing_name = False
+            if name and existing_name:
+                raise forms.ValidationError("You have already created a goal with this name.")
+
         return cleaned_data
 
 

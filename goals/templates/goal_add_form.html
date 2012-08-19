@@ -27,15 +27,15 @@
         {% endif %}
       </div>
 
-      <div class="control-group" style="height: 30px;">
-      {% if request.session.goal_add_errors %}
-        {% for key, value in request.session.goal_add_errors.items %}
-          <span class="required">{{ value }}</span>
-        {% endfor %}
-      {% endif %}
-      </div>
-
     </fieldset>
   </form>
+
+  <div class="control-group">
+  {% if request.session.goal_add_errors %}
+    {% for key, value in request.session.goal_add_errors.items %}
+      <span class="required">{{ value }}</span>
+    {% endfor %}
+  {% endif %}
+  </div>
 
 </div>
