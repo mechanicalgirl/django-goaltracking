@@ -1,3 +1,5 @@
+import sys
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -5,11 +7,24 @@ from django.contrib.auth.models import User
 from goals.models import Goal, Goalset, Date, Dateset, Activity
 
 class GoalForm(forms.ModelForm):
-    name = forms.CharField(label='Goal Name', widget=forms.TextInput, error_messages={'required': 'Please enter a name for your goal.'}, max_length=255)
-    description = forms.CharField(label='Description', widget=forms.TextInput, error_messages={'required': 'Please enter a description.'}, max_length=255)
-
     class Meta:
         model = Goal
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(GoalForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        name = cleaned_data['name']
+        try:
+            existing_name = Goal.objects.get(name__iexact=name, user=self.user)
+        except:
+            existing_name = False
+
+        if name and existing_name:
+            raise forms.ValidationError("You have already created a goal with this name.")
+        return cleaned_data
 
 
 class GoalsetForm(forms.ModelForm):

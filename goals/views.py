@@ -181,7 +181,7 @@ def goal_add(request):
         if 'getstarted' in request.POST:
             return HttpResponseRedirect('/getstarted/')
         if 'add' in request.POST:
-            form = GoalForm(request.POST)
+            form = GoalForm(request.POST, user=request.user)
             if form.is_valid():
                 obj = form.save(commit=False)
                 obj.user = request.user
