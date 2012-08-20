@@ -21,6 +21,7 @@ def goal_activity(id):
     activity_list = []
     try:
         dateset = Dateset.objects.get(pk=id)
+
         date_one = Date.objects.get(pk=dateset.date_one_id)
         act_one = Activity.objects.filter(date=date_one.id)
         for act in act_one:
@@ -58,4 +59,18 @@ def goal_activity(id):
 
     return activity_list
 register.filter('goal_activity', goal_activity)
+
+
+def goal_activity_dates(id):
+    # id is a dateset.id 
+    try:
+        dateset = Dateset.objects.get(pk=id)
+	date = "Week " + str(dateset.date_one.week)
+        date += ", Day " + str(dateset.date_one.day) + " : "
+        date += dateset.date_one.activity_date.strftime("%b %d, %Y")
+    except ObjectDoesNotExist:
+        pass
+
+    return date
+register.filter('goal_activity_dates', goal_activity_dates)
 

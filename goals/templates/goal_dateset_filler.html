@@ -1,0 +1,8 @@
+{% if datesets %}
+  {% for dateset in datesets %}
+    <td class="stretch">
+      {% if dateset.complete %}<div class="progfill">&nbsp;&nbsp;&nbsp;</div>{% endif %}
+    </td>
+  {% endfor %}
+{% endif %}
+

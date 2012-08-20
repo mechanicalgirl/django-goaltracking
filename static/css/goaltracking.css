@@ -19,17 +19,14 @@
 .date_goal_add { margin: 10px; }
 .date_goal_activities { margin: 10px; }
 
-.sum_label { float: left; font-weight: bold; text-align: center; font-size: 16px;  }
+.sum_label { font-weight: bold; text-align: right; font-size: 16px; }
 .sum_week_label { width: 50px; }
 .sum_day_label { width: 50px; }
-.sum_date_label { width: 125px; }
-.sum_goal_label { width: 150px; }
-
-.sum { float: left; text-align: center; font-size: 14px; }
-.sum_week { width: 50px; }
-.sum_day { width: 50px; }
-.sum_date { width: 125px; }
-.sum_goal { width: 150px; }
+.sum_date_label { padding: 2px; }
+.sum_goal_label { width: 100px; padding-right: 10px; }
+.sum { text-align: center; font-size: 14px; }
+td.stretch { padding: 0px; width: 15px; }
+.progfill { background-color: blue; width: 100%; }
 
 #id_goal_one { width: 100px; }
 #id_goal_two { width: 100px; }
@@ -41,8 +38,8 @@ a.tip { position: relative; }
 a.tip span {
 	display: none;
 	position: absolute;
-	top: 0px;
-	left: 110px;
+	top: 100px;
+	left: 0px;
 	width: 250px;
 	padding: 0 0 0 15px;
 	z-index: 100;
@@ -54,7 +51,7 @@ a.tip span {
 	-moz-border-radius: 5px; /* this works only in camino/firefox */
 	-webkit-border-radius: 5px; /* this is just for Safari */
 }
-a:hover.tip { font-size: 99%; /* this is just for IE */ }
+a:hover.tip { /* this is just for IE */ }
 a:hover.tip span { display: block; }
 
 #section-home #nav-home { color: red; }

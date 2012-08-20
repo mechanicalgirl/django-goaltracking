@@ -11,43 +11,50 @@
     <div class="date_outline" style="margin-top: 10px;">
     <h2 style="color: gray;">{{ percent_complete|floatformat:1 }} percent complete!</h2>
     <br clear="all">
-    <div class="sum_label sum_goal_label">{{ goalset.goal_one }}</div>
-    <div class="sum_label sum_goal_label">{{ goalset.goal_two }}</div>
-    <div class="sum_label sum_goal_label">{{ goalset.goal_three }}</div>
-    <div class="sum_label sum_goal_label">{{ goalset.goal_four }}</div>
-    <div class="sum_label sum_week_label">Week</div>
-    <div class="sum_label sum_day_label">Day</div>
-    <div class="sum_label sum_date_label">Date</div>
-    <div class="clear"></div>
 
-    {% if datesets %}
-      {% for dateset in datesets %}
-        <div class="sum sum_goal">{% if dateset.complete %}&#10003;{% else %}&nbsp;{% endif %}</div>
-        <div class="sum sum_goal">{% if dateset.complete %}&#10003;{% else %}&nbsp;{% endif %}</div>
-        <div class="sum sum_goal">{% if dateset.complete %}&#10003;{% else %}&nbsp;{% endif %}</div>
-        <div class="sum sum_goal">{% if dateset.complete %}&#10003;{% else %}&nbsp;{% endif %}</div>
-        <div class="sum sum_week">{{ dateset.date_one.week }}</div>
-        <div class="sum sum_day">{{ dateset.date_one.day }}</div>
-        <div class="sum sum_date">
-          {% if dateset.complete %}
-            {% load activity_tags %}
-            <a class="tip">
-              {{ dateset.date_one.activity_date|date:"F d, Y" }}
-              <span>
-                {% for activity in dateset.id|goal_activity %}
-                  {{ activity.goal }}: {{ activity.activity }}<br>
-                {% endfor %}
-              </span>
-            </a>
-          {% else %}
-            {{ dateset.date_one.activity_date|date:"F d, Y" }}
-          {% endif %}
-        </div>
-        <div class="clear"></div>
-      {% endfor %}
-    {% endif %}
-    </div>
-    <br clear="all">
+    <table>
+      <tr valign="top">
+        <td></td>
+        {% if datesets %}
+          {% load activity_tags %}
+          {% for dateset in datesets %}
+            <td>
+	      {% if dateset.complete %}
+                {% load activity_tags %}
+                <a class="tip">&nbsp;&nbsp;&nbsp;
+                  <span>
+
+                    <p>{{ dateset.id|goal_activity_dates }}</p>
+
+                    {% for activity in dateset.id|goal_activity %}
+                      {{ activity.goal }}: {{ activity.activity }}<br>
+                    {% endfor %}
+                  </span>
+                </a>
+              {% else %}
+                <div class="sum_date_label">{{ dateset.date_one.week }}.{{ dateset.date_one.day }}</div>
+	      {% endif %}
+            </td>
+          {% endfor %}
+        {% endif %}
+      </tr>
+      <tr valign="top">
+        <td nowrap="nowrap"><div class="sum_label sum_goal_label">{{ goalset.goal_one }}</div></td>
+        {% include 'goal_dateset_filler.html' %}
+      </tr>
+      <tr valign="top">
+        <td nowrap="nowrap"><div class="sum_label sum_goal_label">{{ goalset.goal_two }}</div></td>
+        {% include 'goal_dateset_filler.html' %}
+      </tr>
+      <tr valign="top">
+        <td nowrap="nowrap"><div class="sum_label sum_goal_label">{{ goalset.goal_three }}</div></td>
+        {% include 'goal_dateset_filler.html' %}
+      </tr>
+      <tr valign="top">
+        <td nowrap="nowrap"><div class="sum_label sum_goal_label">{{ goalset.goal_four }}</div></td>
+        {% include 'goal_dateset_filler.html' %}
+      </tr>
+    </table>
 
   {% endif %}
 
