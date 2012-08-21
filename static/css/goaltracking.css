@@ -4,6 +4,7 @@
 
 .half { width: 49%; }
 .quarter { width: 22%; padding: 10px; }
+.fifth { width: 18%; border: 0px solid red; padding: 10px; }
 .onethird { width: 35%; }
 .twothird { width: 60%; }
 

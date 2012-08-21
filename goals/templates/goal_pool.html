@@ -14,7 +14,7 @@
       {% if not getstarted %}
         <form action="/goals/goalremove/{{ goal.id }}" method="post" class="form-horizontal" style="padding-bottom: 0;">
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary" name="remove" value="remove">X</button>
+          <button type="submit" class="btn btn-primary" style="padding: 0px;" title="Remove" name="remove" value="remove">&#x2716;</button>
         </form>
       {% endif %}
       </td>

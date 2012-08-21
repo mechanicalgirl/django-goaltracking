@@ -70,6 +70,10 @@ def show_home(request):
             dates = Dateset.objects.filter(complete=True, 
                 date_one__goal__user=request.user).order_by('-date_one__activity_date')[0:1]
 
+        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        context["datesets_complete"] = len(datesets_complete)
+        context["datesets_remaining"] = 60 - len(datesets_complete)
+
         context["dates"] = dates
         context["activityform"] = ActivityForm()
         context["dateform"] = DateForm()
