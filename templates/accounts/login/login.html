@@ -4,7 +4,7 @@
     : Log In
 {% endblock %}
 
-{% block content_col %}
+{% block content %}
 
     <div>
       <form method='post' action='./' class="form-inline">
@@ -18,7 +18,8 @@
     </div>
 
     <div>
-        Or register: 
+      Need an account?<br>
+      <a href="/register/"><button type="submit" class="btn btn-primary" title="Register" name="Register" value="Register">Register</button></a>
     </div>
 
 {% endblock %}

@@ -6,3 +6,9 @@ local_settings.py
 manage.py
 
 settings.py
+
+notes.txt
+
+registration/*
+
+static/docs/*

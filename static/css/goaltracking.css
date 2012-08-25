@@ -39,8 +39,8 @@ a.tip { position: relative; }
 a.tip span {
 	display: none;
 	position: absolute;
-	top: 100px;
-	left: 0px;
+	top: 125px;
+	left: -125px;
 	width: 250px;
 	padding: 0 0 0 15px;
 	z-index: 100;
