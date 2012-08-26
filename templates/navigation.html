@@ -15,8 +15,7 @@
 	{% endif %}
 	{% if user.id %}
 	<li style="width: 50px;">&nbsp;</li>
-	<li><a>Welcome, {{ user.username }}</a></li>
-	<li><a href="/profile/{{ user.username }}/" id="nav-prof">Your Profile</a></li>
+	<li><a href="/profile/">Welcome, {{ user.username }}</a></li>
 	<li><a href="/accounts/logout/">Log Out</a></li>
 	{% endif %}
       </ul>
