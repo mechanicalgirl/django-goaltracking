@@ -24,7 +24,6 @@ def show_home(request):
     context = {}
 
     try:
-        # user has a goal set in progress
         goalset = Goalset.objects.get(active_date__lte=datetime.now(), 
             complete_date__isnull=True, goal_one__user=request.user)
         context['goalset'] = goalset
@@ -37,13 +36,11 @@ def show_home(request):
         try:
             goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
 
-            if len(goalpool) >= 4:
-                # user is ready to define a goal set
+            if len(goalpool) >= 4: # user is ready to define a goal set
                 context["ready"] = True
                 context["setform"] = GoalsetForm(user=request.user)
                 context["goalform"] = GoalForm()
-            else:
-                # user is not ready to start a goal set - must add more goals to the pool
+            else: # user is not ready to start a goal set - must add more goals to the pool
                 context["ready"] = False
                 context["setform"] = False
                 context["goalform"] = GoalForm()
@@ -55,24 +52,27 @@ def show_home(request):
             # user does not have any available goals - either completed all, or has not added any
             goalpool = None
 
-    else:
-        ## TODO: plan for completed goal sets
-        ## when there are no goals left, let the user mark the set as complete
-        ## add a completed date to the goalset object
-        ## update included goal objects to complete=True
+    else: # user has a goal set in progress
+        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_remaining = 60 - len(datesets_complete)
 
         today = datetime.now().date()
         dates = Dateset.objects.filter(
             Q(date_one__activity_date__lte=today, complete=False) | 
             Q(date_one__activity_date=today),
             date_one__goal__user=request.user).order_by('-date_one__activity_date')
-        if len(dates) == 0:
-            dates = Dateset.objects.filter(complete=True, 
+
+        if len(dates) == 0:  # if no open datesets are returned
+            # get the latest closed dateset
+            dates = Dateset.objects.filter(complete=True,
                 date_one__goal__user=request.user).order_by('-date_one__activity_date')[0:1]
 
-        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+            if datesets_remaining == 0:  
+                # when there are no goals left, let the user know the set is complete
+                return HttpResponseRedirect('/goals/complete/')
+
         context["datesets_complete"] = len(datesets_complete)
-        context["datesets_remaining"] = 60 - len(datesets_complete)
+        context["datesets_remaining"] = datesets_remaining
 
         context["dates"] = dates
         context["activityform"] = ActivityForm()
@@ -120,6 +120,51 @@ def show_summary(request, id=None):
             context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
+
+
+@login_required
+def show_complete(request):
+    template_name = 'complete.html'
+    context = {}
+
+    try:
+        goalset = Goalset.objects.get(active_date__lte=datetime.now(),
+            complete_date__isnull=True, goal_one__user=request.user)
+        context['goalset'] = goalset
+        goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
+        goalsetform = GoalsetForm(instance=goalset)
+        context['goalsetform'] = goalsetform
+    except ObjectDoesNotExist:
+        goalset = None
+
+    if goalset == None:
+        return HttpResponseRedirect('/')
+    else:
+        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_remaining = 60 - len(datesets_complete)
+        if datesets_remaining > 0:
+            return HttpResponseRedirect('/')
+        else:
+            if request.method == 'POST':
+                if 'finish' in request.POST:
+                    # 1) add a completed date to the goalset object
+                    obj = goalsetform.save(commit=False)
+                    obj.complete_date = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
+                    obj.save()
+
+                    # 2) update included goal objects to complete=True
+                    goals = [k for k in request.POST if k.isdigit()]
+                    for g in goals:
+                        goal = Goal.objects.get(pk=g)
+                        goalform = GoalForm(instance=goal)
+                        obj = goalform.save(commit=False)
+                        obj.complete = True
+                        obj.save()
+
+                return HttpResponseRedirect('/')
+
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
+
 
 @login_required
 def goal_set(request):

@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^goaladd/',				views.goal_add,         name='add_new_goal'),
     url(r'^summary/(?P<id>\w+)/*$',    		views.show_summary,     name='goals_summary'),
     url(r'^summary/*$',             		views.show_summary,     name='goals_summary'),
+    url(r'^complete/*$',                        views.show_complete,    name='goalset_complete'),
     url(r'^$',					views.show_home,        name='goals_home'),
 )
 

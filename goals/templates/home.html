@@ -18,6 +18,9 @@
 
         {% if getstarted %}
 
+          {% load copy_tags %}
+          {% static_copy 'goal_choose' %}
+          <br clear="all">
           <div class="left twothird">
             {% include "goal_choose.html" %}
           </div>
