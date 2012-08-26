@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
-from django.http import Http404
-from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+# from django.http import Http404
+# from django.template.loader import render_to_string
+# from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 
@@ -112,7 +112,7 @@ class Activity(models.Model):
 class Quote(models.Model):
     week = models.IntegerField()
     day = models.IntegerField()
-    quote = models.CharField(max_length=255)
+    quote = models.CharField(max_length=255, unique=True)
 
     def __unicode__(self):
         return u"%s" % (self.quote)
