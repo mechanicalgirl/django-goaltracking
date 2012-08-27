@@ -167,6 +167,82 @@ def show_complete(request):
 
 
 @login_required
+def show_mobile(request):
+    template_name = 'mobile.html'
+    context = {}
+
+    try:
+        goalset = Goalset.objects.get(active_date__lte=datetime.now(),
+            complete_date__isnull=True, goal_one__user=request.user)
+    except ObjectDoesNotExist:
+        goalset = None
+
+    """
+    if goalset:  # user has a goal set in progress
+        context['goalset'] = goalset
+        datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
+        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        context["datesets"] = datesets_total
+        context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
+    """
+
+    if goalset == None:
+        if 'getstarted' in request.path:
+            context["getstarted"] = True
+        try:
+            goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
+
+            if len(goalpool) >= 4: # user is ready to define a goal set
+                context["ready"] = True
+                context["setform"] = GoalsetForm(user=request.user)
+                context["goalform"] = GoalForm()
+            else: # user is not ready to start a goal set - must add more goals to the pool
+                context["ready"] = False
+                context["setform"] = False
+                context["goalform"] = GoalForm()
+                context["howmanymore"] = 4-len(goalpool)
+
+            context["goalpool"] = goalpool
+
+        except ObjectDoesNotExist:
+            # user does not have any available goals - either completed all, or has not added any
+            goalpool = None
+
+    else: # user has a goal set in progress
+        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_remaining = 60 - len(datesets_complete)
+        datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
+        context["datesets"] = datesets_total
+        context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
+        context["datesets_complete"] = len(datesets_complete)
+        context["datesets_remaining"] = datesets_remaining
+
+        today = datetime.now().date()
+        dates = Dateset.objects.filter(
+            Q(date_one__activity_date__lte=today, complete=False) |
+            Q(date_one__activity_date=today),
+            date_one__goal__user=request.user).order_by('-date_one__activity_date')
+
+        if len(dates) == 0:  # if no open datesets are returned
+            # get the latest closed dateset
+            dates = Dateset.objects.filter(complete=True,
+                date_one__goal__user=request.user).order_by('-date_one__activity_date')[0:1]
+
+            if datesets_remaining == 0:
+                # when there are no goals left, let the user know the set is complete
+                return HttpResponseRedirect('/goals/complete/')
+
+        context["dates"] = dates
+        context["activityform"] = ActivityForm()
+        context["dateform"] = DateForm()
+        context["datesetform"] = DatesetForm()
+
+        context['goalset'] = goalset
+
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
+
+
+@login_required
 def goal_set(request):
     template_name = 'home.html'
 
