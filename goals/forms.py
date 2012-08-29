@@ -17,6 +17,7 @@ class GoalForm(forms.ModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
 
+        # prevent goals with duplicate names
         name = cleaned_data.get('name')
         if name is None:
             raise forms.ValidationError("Please enter a name for your goal.")

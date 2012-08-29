@@ -1,8 +1,5 @@
 from django.conf import settings
 from django.db import models
-# from django.http import Http404
-# from django.template.loader import render_to_string
-# from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 

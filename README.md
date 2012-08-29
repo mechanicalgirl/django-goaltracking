@@ -43,7 +43,7 @@ Contact Information:
 
 	See the app in action: http://www.4-goals.com (coming soon)
 	Twitter: @bshaurette
-    My developer site: http://www.mechanicalgirl.com
+        My developer site: http://www.mechanicalgirl.com
 
 Last Revised:
 

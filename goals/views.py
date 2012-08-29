@@ -20,6 +20,14 @@ from goals.forms import GoalForm, GoalsetForm, DateForm, DatesetForm, ActivityFo
 
 @login_required
 def show_home(request):
+    """
+    This function handles the several conditions that can occur when
+    a logged-in user hits the home page, returning views for:
+    1) Users who have not yet begun the process of adding goals
+    2) Users who have added goals but not yet started a goal set
+    3) Users with an active goal set
+    4) Users who have completed a goal set
+    """
     template_name = 'home.html'
     context = {}
 
@@ -30,10 +38,12 @@ def show_home(request):
     except ObjectDoesNotExist:
         goalset = None
 
+    # user is not working on an active set of four goals
     if goalset == None:
         if 'getstarted' in request.path:
             context["getstarted"] = True
         try:
+            # user has a list of goals but has not yet selected a set of four to work on
             goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
 
             if len(goalpool) >= 4: # user is ready to define a goal set
@@ -52,7 +62,8 @@ def show_home(request):
             # user does not have any available goals - either completed all, or has not added any
             goalpool = None
 
-    else: # user has a goal set in progress
+    # user has a goal set in progress
+    else:
         datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
 
@@ -62,8 +73,9 @@ def show_home(request):
             Q(date_one__activity_date=today),
             date_one__goal__user=request.user).order_by('-date_one__activity_date')
 
-        if len(dates) == 0:  # if no open datesets are returned
-            # get the latest closed dateset
+        # if no open datesets are returned
+        if len(dates) == 0:
+            # then just get the latest closed dateset
             dates = Dateset.objects.filter(complete=True,
                 date_one__goal__user=request.user).order_by('-date_one__activity_date')[0:1]
 
@@ -84,13 +96,18 @@ def show_home(request):
 
 @login_required
 def show_summary(request, id=None):
+    """
+    This method returns either:
+    1) a summary of activity for a specific date set
+    2) a summary of all activity for a user's current goal set
+    """
     context = {}
 
     if id:
+        # if an id is passed in, show the single date set summary
         template_name = 'goal_summary.html'
         try:
             dateset = Dateset.objects.get(pk=id)
-            ## TODO: clean this up:
             date_one = Date.objects.get(pk=dateset.date_one_id)
             context['act_one'] = Activity.objects.filter(date=date_one.id)
             date_two = Date.objects.get(pk=dateset.date_two_id)
@@ -100,10 +117,10 @@ def show_summary(request, id=None):
             date_four = Date.objects.get(pk=dateset.date_four_id)
             context['act_four'] = Activity.objects.filter(date=date_four.id)
         except ObjectDoesNotExist:
-           ## TODO: redirect to an error page
            return HttpResponseRedirect('/')
 
     else:
+        # otherwise show the complete summary for the request user
         template_name = 'summary.html'
         try:
             goalset = Goalset.objects.get(active_date__lte=datetime.now(),
@@ -124,6 +141,11 @@ def show_summary(request, id=None):
 
 @login_required
 def show_complete(request):
+    """
+    Users who have completed a current goal set are redirected to '/goals/complete/'
+    This function gives the user an opportunity to close out the active 
+    goal set while still leaving some goals available for further work.
+    """
     template_name = 'complete.html'
     context = {}
 
@@ -168,6 +190,10 @@ def show_complete(request):
 
 @login_required
 def show_mobile(request):
+    """
+    This function handles the mobile view, returns context also 
+    included in the home and summary views
+    """
     template_name = 'mobile.html'
     context = {}
 
@@ -177,26 +203,19 @@ def show_mobile(request):
     except ObjectDoesNotExist:
         goalset = None
 
-    """
-    if goalset:  # user has a goal set in progress
-        context['goalset'] = goalset
-        datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
-        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
-        context["datesets"] = datesets_total
-        context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
-    """
-
     if goalset == None:
         if 'getstarted' in request.path:
             context["getstarted"] = True
         try:
             goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
 
-            if len(goalpool) >= 4: # user is ready to define a goal set
+            if len(goalpool) >= 4: 
+                # user is ready to define a goal set
                 context["ready"] = True
                 context["setform"] = GoalsetForm(user=request.user)
                 context["goalform"] = GoalForm()
-            else: # user is not ready to start a goal set - must add more goals to the pool
+            else: 
+                # user is not ready to start a goal set - must add more goals to the pool
                 context["ready"] = False
                 context["setform"] = False
                 context["goalform"] = GoalForm()
@@ -208,7 +227,8 @@ def show_mobile(request):
             # user does not have any available goals - either completed all, or has not added any
             goalpool = None
 
-    else: # user has a goal set in progress
+    else: 
+        # user has a goal set in progress
         datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
         datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
@@ -244,6 +264,11 @@ def show_mobile(request):
 
 @login_required
 def goal_set(request):
+    """
+    This function handles the creation of an active goal set for a user:
+    1) checks that the user has enough goals available to create a set
+    2) on goal set save, also creates the necessary date and date sets
+    """
     template_name = 'home.html'
 
     try: del request.session['goal_set_errors']
@@ -262,6 +287,7 @@ def goal_set(request):
                 goalset = Goalset.objects.get(pk=obj.pk)
                 goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
 
+                # generate and save 240 goal dates
                 start = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
                 for g in goals:
                     for w in range(12):
@@ -275,6 +301,7 @@ def goal_set(request):
                             newobj.activity_date = newdate
                             newobj.save()
 
+                # group and save into 60 date sets
                 dateset = Date.objects.values('activity_date').filter(goal__in=goals)
                 dates = set()
                 for newdate in dateset:
@@ -288,7 +315,8 @@ def goal_set(request):
 
                 return HttpResponseRedirect('/')
 
-            else: # form is not valid
+            else: 
+                # form is not valid
                 errors = dict(form.errors.items())
                 request.session['goal_set_errors'] = errors
                 return HttpResponseRedirect('/')
@@ -297,6 +325,9 @@ def goal_set(request):
 
 @login_required
 def goal_add(request):
+    """
+    Handles the form post for adding a new goal
+    """
     template_name = 'home.html'
     try:
         del request.session['goal_add_errors']
@@ -320,6 +351,9 @@ def goal_add(request):
 
 @login_required
 def goal_remove(request,id):
+    """
+    Handles the form post for removing a goal
+    """
     template_name = 'home.html'
     if request.method == 'POST':
         if 'remove' in request.POST:
@@ -329,6 +363,10 @@ def goal_remove(request,id):
 
 @login_required
 def add_activity(request, id):
+    """
+    Handles the form post for adding an activity
+    related to a goal and dateset
+    """
     template_name = 'home.html'
     if request.method == 'POST':
         form = ActivityForm(request.POST)
@@ -342,6 +380,9 @@ def add_activity(request, id):
 
 @login_required
 def close_dateset(request, id):
+    """
+    Handles the form post for closing out a dateset
+    """
     template_name = 'home.html'
     if request.method == 'POST':
         dateset = Dateset.objects.get(pk=id)
