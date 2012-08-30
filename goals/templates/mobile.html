@@ -16,27 +16,27 @@
       {% if goalset %}
           {% if dates %}
             {% for date in dates %}
-              {% include "goal_date_set.html" %}
+              {% include "goal_date_set_mobile.html" %}
             {% endfor %}
           {% endif %}
       {% else %}
           {% if ready %}
-              {% if getstarted %}
-            {% load copy_tags %}
-            {% static_copy 'goal_choose' %}
-            {% include "goal_choose.html" %}
-            {% include "goal_pool.html" %}
-              {% else %}
+            {% if getstarted %}
+              {% load copy_tags %}
+              {% static_copy 'goal_choose' %}
+              {% include "goal_choose_mobile.html" %}
+              {% include "goal_pool_mobile.html" %}
+            {% else %}
+              {% load copy_tags %}
+              {% static_copy 'goal_makelist' %}
+              {% include "goal_add_form_mobile.html" %}
+              {% include "goal_pool_mobile.html" %}
+            {% endif %}
+          {% else %}
             {% load copy_tags %}
             {% static_copy 'goal_makelist' %}
-            {% include "goal_add_form.html" %}
-            {% include "goal_pool.html" %}
-              {% endif %}
-          {% else %}
-          {% load copy_tags %}
-          {% static_copy 'goal_makelist' %}
-          {% include "goal_pool.html" %}
-          {% include "goal_add_form.html" %}
+            {% include "goal_add_form_mobile.html" %}
+            {% include "goal_pool_mobile.html" %}
         {% endif %}
       {% endif %}
 

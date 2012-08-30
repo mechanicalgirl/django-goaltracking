@@ -8,7 +8,7 @@
      <form action="/goals/addactivity/{{date.date_one.id}}/" method="post">
      {% csrf_token %}
      {{ activityform.description }}<br />
-     <input type="submit" value="ADD AN ACTIVITY" />
+     <button type="submit" class="btn btn-primary" name"activity">ADD AN ACTIVITY</button>
      </form>
   {% endif %}
 {% endif %}

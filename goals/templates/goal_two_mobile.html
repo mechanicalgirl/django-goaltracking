@@ -5,10 +5,12 @@
 <div class="date_goal_add">
 {% if not date.complete %}
    {% if activityform %}
-     <form action="/goals/addactivity/{{date.date_two.id}}/" method="post" style="border: 0px solid red; text-align: left;">
-     {% csrf_token %}
-     {{ activityform.description }}<br />
-     <button type="submit" class="btn btn-primary" name"activity">ADD AN ACTIVITY</button>
+     <form action="/goals/addactivity/{{date.date_two.id}}/" method="post">
+       <fieldset>
+         {% csrf_token %}
+         {{ activityform.description }}<br />
+         <button type="submit" class="btn btn-primary" name="activity-mobile" value="activity-mobile">ADD AN ACTIVITY</button>
+       </fieldset>
      </form>
   {% endif %}
 {% endif %}

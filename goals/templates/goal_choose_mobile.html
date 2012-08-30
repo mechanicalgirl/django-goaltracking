@@ -1,0 +1,47 @@
+{% load copy_tags %}
+
+<form action="/goals/goalset/" method="post" class="well form-horizontal">
+  <fieldset>
+  {% csrf_token %}
+
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal One:</label>
+      <div class="controls">
+        {{ setform.goal_one }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Two:</label>
+      <div class="controls">
+        {{ setform.goal_two }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Three:</label>
+      <div class="controls">
+        {{ setform.goal_three }}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="multiSelect">Goal Four:</label>
+      <div class="controls">
+        {{ setform.goal_four }}
+      </div>
+    </div>
+
+  {% static_copy 'goal_commit' %}
+
+  <div class="form-actions" style="margin: 0; padding-bottom: 0;">
+    <button type="submit" class="btn btn-primary" name="commit-mobile" value="commit-mobile">COMMIT</button>
+    <button class="btn" name="goback-mobile" value="goback-mobile">Or turn back now!</button>
+  </div>
+
+  {% if request.session.goal_set_errors %}
+    {% for key, value in request.session.goal_set_errors.items %}
+      <span class="required">{{ value }}</span>
+    {% endfor %}
+  {% endif %}
+
+  </fieldset>
+</form>
+

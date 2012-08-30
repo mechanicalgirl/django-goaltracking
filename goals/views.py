@@ -274,54 +274,60 @@ def goal_set(request):
     try: del request.session['goal_set_errors']
     except KeyError: pass
 
+    redir = '/'
+
     if request.method == 'POST': 
         if 'goback' in request.POST:
-            return HttpResponseRedirect('/')
-        else:
-            form = GoalsetForm(request.POST) 
-            if form.is_valid():
-                obj = form.save(commit=False)
-                obj.user = request.user
-                obj.save()
+            redir = '/'
+        if 'goback-mobile' in request.POST:
+            redir = '/goals/mobile/'
+        if 'commit-mobile' in request.POST:
+            redir = '/goals/mobile/'
 
-                goalset = Goalset.objects.get(pk=obj.pk)
-                goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
+        form = GoalsetForm(request.POST) 
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
 
-                # generate and save 240 goal dates
-                start = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
-                for g in goals:
-                    for w in range(12):
-                        for d in range(5):
-                            newform = DateForm()
-                            newobj = newform.save(commit=False)
-                            newobj.goal = Goal.objects.get(pk=g)
-                            newobj.week = w+1
-                            newobj.day = d+1
-                            newdate = (start + timedelta((7*w)) + timedelta(d))
-                            newobj.activity_date = newdate
-                            newobj.save()
+            goalset = Goalset.objects.get(pk=obj.pk)
+            goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
 
-                # group and save into 60 date sets
-                dateset = Date.objects.values('activity_date').filter(goal__in=goals)
-                dates = set()
-                for newdate in dateset:
-                    sdate = newdate["activity_date"]
-                    dates.add(sdate)
-                for xdate in dates:
-                    dobjs = Date.objects.filter(activity_date=xdate, goal__in=goals)
-                    dsform = DatesetForm({'date_one': dobjs[0].id, 'date_two': dobjs[1].id, 
-                        'date_three': dobjs[2].id, 'date_four': dobjs[3].id})
-                    dsform.save()
+            # generate and save 240 goal dates
+            start = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
+            for g in goals:
+                for w in range(12):
+                    for d in range(5):
+                        newform = DateForm()
+                        newobj = newform.save(commit=False)
+                        newobj.goal = Goal.objects.get(pk=g)
+                        newobj.week = w+1
+                        newobj.day = d+1
+                        newdate = (start + timedelta((7*w)) + timedelta(d))
+                        newobj.activity_date = newdate
+                        newobj.save()
 
-                return HttpResponseRedirect('/')
+            # group and save into 60 date sets
+            dateset = Date.objects.values('activity_date').filter(goal__in=goals)
+            dates = set()
+            for newdate in dateset:
+                sdate = newdate["activity_date"]
+                dates.add(sdate)
+            for xdate in dates:
+                dobjs = Date.objects.filter(activity_date=xdate, goal__in=goals)
+                dsform = DatesetForm({'date_one': dobjs[0].id, 'date_two': dobjs[1].id, 
+                    'date_three': dobjs[2].id, 'date_four': dobjs[3].id})
+                dsform.save()
 
-            else: 
-                # form is not valid
-                errors = dict(form.errors.items())
-                request.session['goal_set_errors'] = errors
-                return HttpResponseRedirect('/')
+            return HttpResponseRedirect(redir)
 
-    return HttpResponseRedirect('/')
+        else: 
+            # form is not valid
+            errors = dict(form.errors.items())
+            request.session['goal_set_errors'] = errors
+            return HttpResponseRedirect(redir)
+
+    return HttpResponseRedirect(redir)
 
 @login_required
 def goal_add(request):
@@ -329,14 +335,24 @@ def goal_add(request):
     Handles the form post for adding a new goal
     """
     template_name = 'home.html'
+
     try:
         del request.session['goal_add_errors']
     except KeyError:
         pass
+
+    redir = '/'
+
     if request.method == 'POST':
+
+        if 'getstarted-mobile' in request.POST:
+            redir = '/goals/mobile/getstarted/'
         if 'getstarted' in request.POST:
-            return HttpResponseRedirect('/getstarted/')
-        if 'add' in request.POST:
+            redir = '/getstarted/'
+        if 'add-mobile' in request.POST:
+            redir = '/goals/mobile/'
+
+        if 'add' or 'add-mobile' in request.POST:
             form = GoalForm(request.POST, user=request.user)
             if form.is_valid():
                 obj = form.save(commit=False)
@@ -345,8 +361,10 @@ def goal_add(request):
             else:
                 errors = dict(form.errors.items()) 
                 request.session['goal_add_errors'] = errors
-            return HttpResponseRedirect('/')
-    return HttpResponseRedirect('/')
+
+            return HttpResponseRedirect(redir)
+
+    return HttpResponseRedirect(redir)
 
 
 @login_required
@@ -355,11 +373,16 @@ def goal_remove(request,id):
     Handles the form post for removing a goal
     """
     template_name = 'home.html'
+
+    redir = '/'
+    if 'remove-mobile' in request.POST:
+        redir = '/goals/mobile/'
+    
     if request.method == 'POST':
         if 'remove' in request.POST:
             u = Goal.objects.get(pk=id).delete()
-            return HttpResponseRedirect('/')
-    return HttpResponseRedirect('/')
+            return HttpResponseRedirect(redir)
+    return HttpResponseRedirect(redir)
 
 @login_required
 def add_activity(request, id):
@@ -368,15 +391,20 @@ def add_activity(request, id):
     related to a goal and dateset
     """
     template_name = 'home.html'
+
+    redir = '/'
+    if 'activity-mobile' in request.POST:
+        redir = '/goals/mobile/'
+
     if request.method == 'POST':
         form = ActivityForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.date = Date.objects.get(pk=id)
             obj.save()
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect(redir)
 
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(redir)
 
 @login_required
 def close_dateset(request, id):
@@ -384,11 +412,16 @@ def close_dateset(request, id):
     Handles the form post for closing out a dateset
     """
     template_name = 'home.html'
+
+    redir = '/'
+    if 'date-complete-mobile' in request.POST:
+        redir = '/goals/mobile/'
+
     if request.method == 'POST':
         dateset = Dateset.objects.get(pk=id)
         dateset.complete = True
         dateset.save()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(redir)
 
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(redir)
 

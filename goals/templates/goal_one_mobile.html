@@ -1,0 +1,20 @@
+<div class="date_goal">
+  <h3>Goal: {{ date.date_one.goal }}</h3>
+</div>
+
+{% if not date.complete %}
+   {% if activityform %}
+     <form action="/goals/addactivity/{{date.date_one.id}}/" method="post">
+       <fieldset>
+         {% csrf_token %}
+         {{ activityform.description }}<br />
+         <button type="submit" class="btn btn-primary" name="activity-mobile" value="activity-mobile">ADD AN ACTIVITY</button>
+       </fieldset>
+     </form>
+  {% endif %}
+{% endif %}
+
+{% load activity_tags %}
+{% for activity in date.date_one.id|date_activity %}
+{{ activity }}<br>
+{% endfor %}

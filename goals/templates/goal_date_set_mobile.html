@@ -1,0 +1,29 @@
+<br clear="all">
+<div class="date_outline">
+    <h3>Week {{ date.date_one.week }}, Day {{ date.date_one.day }} - {{ date.date_one.activity_date|date:"F d, Y" }} {% if date.complete %} is COMPLETE{% endif %}</h3>
+    <h4>{{ datesets_complete }} down, {{ datesets_remaining }} to go!</h4>
+    {% load quote_tags %}
+    <p><em>{% daily_quote date.date_one.week date.date_one.day %}</em></p>
+
+    {% include "goal_one_mobile.html" %}
+    <hr>
+    {% include "goal_two_mobile.html" %}
+    <hr>
+    {% include "goal_three_mobile.html" %}
+    <hr>
+    {% include "goal_four_mobile.html" %}
+    {% if not date.complete %}
+      {% if datesetform %}
+        <form action="/goals/closedateset/{{date.id}}/" method="post" style="text-align: left;">
+          {% csrf_token %}
+          <input type='hidden' name='finished' value='True' />
+          <button class="btn btn-primary" name="date-complete-mobile" value="date-complete-mobile">DATE COMPLETE</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+  <hr>
+
+</div> <!-- end date_outline -->
+
+
