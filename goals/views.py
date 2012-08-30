@@ -375,13 +375,12 @@ def goal_remove(request,id):
     template_name = 'home.html'
 
     redir = '/'
-    if 'remove-mobile' in request.POST:
-        redir = '/goals/mobile/'
     
     if request.method == 'POST':
-        if 'remove' in request.POST:
-            u = Goal.objects.get(pk=id).delete()
-            return HttpResponseRedirect(redir)
+        if 'remove-mobile' in request.POST:
+            redir = '/goals/mobile/'
+        u = Goal.objects.get(pk=id).delete()
+        return HttpResponseRedirect(redir)
     return HttpResponseRedirect(redir)
 
 @login_required
