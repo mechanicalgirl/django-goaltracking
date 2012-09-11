@@ -1,29 +1,19 @@
-<div>
+<div class="container">
+    <div class="row">
+        <div class="span12">
 
-  <form action="/goals/goaladd/" method="post" class="form-horizontal well" style="padding-bottom: 0;">
+  <form action="/goals/goaladd/" method="post" class="form well" style="padding-bottom: 0;">
     <fieldset>
-      {% csrf_token %}
 
       <div class="control-group">
-        <label class="control-label">Goal Name:</label>
-        <div class="controls">
-          <input id="id_name" name="name" maxlength="255" type="text">
-        </div>
-      </div>
-
-      <div class="control-group">
-        <label class="control-label">Description:</label>
-        <div class="controls">
-          <input id="id_description" name="description" maxlength="200" type="text">
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary" name="add-mobile" value="add">Add A Goal</button>
+        {% csrf_token %}
+        <input id="id_name" name="name" maxlength="255" type="text" placeholder="Goal Name"><br>
+        <textarea class="field span12" id="id_description" name="description" rows="3" maxlength="200" placeholder="Enter a brief description"></textarea>
+        <button type="submit" class="btn btn-primary" name="add" value="add">Add A Goal</button>
         {% if howmanymore > 0 %}
           <p class="help-block">You need to add at least {{ howmanymore }} idea(s) to get started.</p>
         {% else %}
-          <button class="btn" name="getstarted-mobile" value="getstarted">Get Started</button>
+          <button class="btn" name="getstarted" value="getstarted">Get Started</button>
         {% endif %}
       </div>
 
@@ -38,4 +28,8 @@
   {% endif %}
   </div>
 
+        </div>
+    </div>
 </div>
+
+
