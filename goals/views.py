@@ -308,7 +308,8 @@ def goal_set(request):
                         newobj.save()
 
             # group and save into 60 date sets
-            dateset = Date.objects.values('activity_date').filter(goal__in=goals)
+            today = datetime.now().date()
+            dateset = Date.objects.values('activity_date').filter(goal__in=goals, activity_date__gte=today)
             dates = set()
             for newdate in dateset:
                 sdate = newdate["activity_date"]

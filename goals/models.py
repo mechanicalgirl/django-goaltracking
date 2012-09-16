@@ -68,7 +68,7 @@ class Date(models.Model):
 
     class Meta:
         ordering = ["goal"]
-        unique_together = ("goal","week","day",)
+        unique_together = ("goal","week","day","activity_date",)
 
 
 class Dateset(models.Model):
