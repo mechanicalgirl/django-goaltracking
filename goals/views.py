@@ -66,6 +66,8 @@ def show_home(request):
     else:
         datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
+        ## TODO: fix this queryset - pulling date records from previous 
+        ## versions for a goal id, so this count is off
 
         today = datetime.now().date()
         dates = Dateset.objects.filter(
@@ -133,6 +135,8 @@ def show_summary(request, id=None):
 
             datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
             datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+            ## TODO: fix these querysets - pulling date records from previous versions for a goal id
+
             context["datesets"] = datesets_total
             context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
 
@@ -288,6 +292,7 @@ def goal_set(request):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = request.user
+            obj.active_date = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
             obj.save()
 
             goalset = Goalset.objects.get(pk=obj.pk)
