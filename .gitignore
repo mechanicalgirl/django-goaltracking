@@ -20,3 +20,5 @@ static/images/summary.jpg
 *.py~
 
 ~
+
+*.html~
