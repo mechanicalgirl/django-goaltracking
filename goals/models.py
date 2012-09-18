@@ -26,8 +26,8 @@ class Goalset(models.Model):
     goal_two = models.ForeignKey(Goal, related_name='goal_two')
     goal_three = models.ForeignKey(Goal, related_name='goal_three')
     goal_four = models.ForeignKey(Goal, related_name='goal_four')
-    active_date = models.DateTimeField('date started', auto_now_add=True, editable=False)
-    complete_date = models.DateTimeField('date completed', null=True, blank=True, editable=False)
+    active_date = models.DateField('date started', auto_now_add=True, editable=False)
+    complete_date = models.DateField('date completed', null=True, blank=True, editable=False)
 
     """
     set active_date and complete_date values 
