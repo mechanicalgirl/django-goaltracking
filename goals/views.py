@@ -1,22 +1,17 @@
 from datetime import datetime
 from datetime import timedelta
-import sys
 
 from django.conf import settings
-from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.db.models import Q
-from django.db import DatabaseError, IntegrityError
 
 from goals.models import Goal, Goalset, Date, Dateset, Activity, Copy
 from goals.forms import GoalForm, GoalsetForm, DateForm, DatesetForm, ActivityForm
+
 
 @login_required
 def show_home(request):
@@ -32,29 +27,30 @@ def show_home(request):
     context = {}
 
     try:
-        goalset = Goalset.objects.get(active_date__lte=datetime.now(), 
-            complete_date__isnull=True, goal_one__user=request.user)
+        goalset = Goalset.objects.get(active_date__lte=datetime.now(),
+                                      complete_date__isnull=True, goal_one__user=request.user)
         context['goalset'] = goalset
     except ObjectDoesNotExist:
         goalset = None
 
     # user is not working on an active set of four goals
-    if goalset == None:
+    if goalset is None:
         if 'getstarted' in request.path:
             context["getstarted"] = True
         try:
             # user has a list of goals but has not yet selected a set of four to work on
-            goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
+            goalpool = Goal.objects.filter(
+                complete=False).filter(user=request.user).order_by('id')
 
-            if len(goalpool) >= 4: # user is ready to define a goal set
+            if len(goalpool) >= 4:  # user is ready to define a goal set
                 context["ready"] = True
                 context["setform"] = GoalsetForm(user=request.user)
                 context["goalform"] = GoalForm()
-            else: # user is not ready to start a goal set - must add more goals to the pool
+            else:  # user is not ready to start a goal set - must add more goals to the pool
                 context["ready"] = False
                 context["setform"] = False
                 context["goalform"] = GoalForm()
-                context["howmanymore"] = 4-len(goalpool)
+                context["howmanymore"] = 4 - len(goalpool)
 
             context["goalpool"] = goalpool
 
@@ -64,7 +60,8 @@ def show_home(request):
 
     # user has a goal set in progress
     else:
-        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_complete = Dateset.objects.filter(
+            date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
         ## TODO: fix this queryset - pulling date records from previous 
         ## versions for a goal id, so this count is off
@@ -119,7 +116,7 @@ def show_summary(request, id=None):
             date_four = Date.objects.get(pk=dateset.date_four_id)
             context['act_four'] = Activity.objects.filter(date=date_four.id)
         except ObjectDoesNotExist:
-           return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/')
 
     else:
         # otherwise show the complete summary for the request user
@@ -133,12 +130,15 @@ def show_summary(request, id=None):
         if goalset:  # user has a goal set in progress
             context['goalset'] = goalset
 
-            datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
-            datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+            datesets_total = Dateset.objects.filter(
+                date_one__goal__user=request.user).order_by('date_one__activity_date')
+            datesets_complete = Dateset.objects.filter(
+                date_one__goal__user=request.user, complete=True)
             ## TODO: fix these querysets - pulling date records from previous versions for a goal id
 
             context["datesets"] = datesets_total
-            context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
+            context["percent_complete"] = 100 * float(len(
+                datesets_complete)) / float(len(datesets_total))
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
@@ -157,16 +157,18 @@ def show_complete(request):
         goalset = Goalset.objects.get(active_date__lte=datetime.now(),
             complete_date__isnull=True, goal_one__user=request.user)
         context['goalset'] = goalset
-        goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
+        goals = [goalset.goal_one.id, goalset.goal_two.id, 
+            goalset.goal_three.id, goalset.goal_four.id]
         goalsetform = GoalsetForm(instance=goalset)
         context['goalsetform'] = goalsetform
     except ObjectDoesNotExist:
         goalset = None
 
-    if goalset == None:
+    if goalset is None:
         return HttpResponseRedirect('/')
     else:
-        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_complete = Dateset.objects.filter(
+            date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
         if datesets_remaining > 0:
             return HttpResponseRedirect('/')
@@ -207,11 +209,12 @@ def show_mobile(request):
     except ObjectDoesNotExist:
         goalset = None
 
-    if goalset == None:
+    if goalset is None:
         if 'getstarted' in request.path:
             context["getstarted"] = True
         try:
-            goalpool = Goal.objects.filter(complete=False).filter(user=request.user).order_by('id')
+            goalpool = Goal.objects.filter(
+                complete=False).filter(user=request.user).order_by('id')
 
             if len(goalpool) >= 4: 
                 # user is ready to define a goal set
@@ -223,7 +226,7 @@ def show_mobile(request):
                 context["ready"] = False
                 context["setform"] = False
                 context["goalform"] = GoalForm()
-                context["howmanymore"] = 4-len(goalpool)
+                context["howmanymore"] = 4 - len(goalpool)
 
             context["goalpool"] = goalpool
 
@@ -233,11 +236,14 @@ def show_mobile(request):
 
     else: 
         # user has a goal set in progress
-        datesets_complete = Dateset.objects.filter(date_one__goal__user=request.user, complete=True)
+        datesets_complete = Dateset.objects.filter(
+            date_one__goal__user=request.user, complete=True)
         datesets_remaining = 60 - len(datesets_complete)
-        datesets_total = Dateset.objects.filter(date_one__goal__user=request.user).order_by('date_one__activity_date')
+        datesets_total = Dateset.objects.filter(
+            date_one__goal__user=request.user).order_by('date_one__activity_date')
         context["datesets"] = datesets_total
-        context["percent_complete"] = 100 * float(len(datesets_complete)) / float(len(datesets_total))
+        context["percent_complete"] = 100 * float(len(
+            datesets_complete)) / float(len(datesets_total))
         context["datesets_complete"] = len(datesets_complete)
         context["datesets_remaining"] = datesets_remaining
 
@@ -275,8 +281,10 @@ def goal_set(request):
     """
     template_name = 'home.html'
 
-    try: del request.session['goal_set_errors']
-    except KeyError: pass
+    try:
+        del request.session['goal_set_errors']
+    except KeyError:
+        pass
 
     redir = '/'
 
@@ -292,36 +300,42 @@ def goal_set(request):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = request.user
-            obj.active_date = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
+            obj.active_date = datetime(
+                datetime.now().year, datetime.now().month, datetime.now().day)
             obj.save()
 
             goalset = Goalset.objects.get(pk=obj.pk)
-            goals = [goalset.goal_one.id, goalset.goal_two.id, goalset.goal_three.id, goalset.goal_four.id]
+            goals = [goalset.goal_one.id, goalset.goal_two.id, 
+                goalset.goal_three.id, goalset.goal_four.id]
 
             # generate and save 240 goal dates
-            start = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
+            start = datetime(
+                datetime.now().year, datetime.now().month, datetime.now().day)
             for g in goals:
                 for w in range(12):
                     for d in range(5):
                         newform = DateForm()
                         newobj = newform.save(commit=False)
                         newobj.goal = Goal.objects.get(pk=g)
-                        newobj.week = w+1
-                        newobj.day = d+1
-                        newdate = (start + timedelta((7*w)) + timedelta(d))
+                        newobj.week = w + 1
+                        newobj.day = d + 1
+                        newdate = (start + timedelta((7 * w)) + timedelta(d))
                         newobj.activity_date = newdate
                         newobj.save()
 
             # group and save into 60 date sets
             today = datetime.now().date()
-            dateset = Date.objects.values('activity_date').filter(goal__in=goals, activity_date__gte=today)
+            dateset = Date.objects.values('activity_date').filter(
+                goal__in=goals, activity_date__gte=today)
             dates = set()
             for newdate in dateset:
                 sdate = newdate["activity_date"]
                 dates.add(sdate)
             for xdate in dates:
-                dobjs = Date.objects.filter(activity_date=xdate, goal__in=goals)
-                dsform = DatesetForm({'date_one': dobjs[0].id, 'date_two': dobjs[1].id, 
+                dobjs = Date.objects.filter(
+                    activity_date=xdate, goal__in=goals)
+                dsform = DatesetForm(
+                    {'date_one': dobjs[0].id, 'date_two': dobjs[1].id, 
                     'date_three': dobjs[2].id, 'date_four': dobjs[3].id})
                 dsform.save()
 
@@ -334,6 +348,7 @@ def goal_set(request):
             return HttpResponseRedirect(redir)
 
     return HttpResponseRedirect(redir)
+
 
 @login_required
 def goal_add(request):
@@ -348,9 +363,7 @@ def goal_add(request):
         pass
 
     redir = '/'
-
     if request.method == 'POST':
-
         if 'getstarted-mobile' in request.POST:
             redir = '/goals/mobile/getstarted/'
         if 'getstarted' in request.POST:
@@ -374,20 +387,21 @@ def goal_add(request):
 
 
 @login_required
-def goal_remove(request,id):
+def goal_remove(request, id):
     """
     Handles the form post for removing a goal
     """
     template_name = 'home.html'
 
     redir = '/'
-    
     if request.method == 'POST':
         if 'remove-mobile' in request.POST:
             redir = '/goals/mobile/'
+
         u = Goal.objects.get(pk=id).delete()
         return HttpResponseRedirect(redir)
     return HttpResponseRedirect(redir)
+
 
 @login_required
 def add_activity(request, id):
@@ -411,6 +425,7 @@ def add_activity(request, id):
 
     return HttpResponseRedirect(redir)
 
+
 @login_required
 def close_dateset(request, id):
     """
@@ -429,4 +444,3 @@ def close_dateset(request, id):
         return HttpResponseRedirect(redir)
 
     return HttpResponseRedirect(redir)
-
