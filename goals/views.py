@@ -61,10 +61,10 @@ def show_home(request):
     # user has a goal set in progress
     else:
         datesets_complete = Dateset.objects.filter(
-            date_one__goal__user=request.user, complete=True)
-        datesets_remaining = 60 - len(datesets_complete)
-        ## TODO: fix this queryset - pulling date records from previous 
-        ## versions for a goal id, so this count is off
+            date_one__goal__user=request.user, 
+            date_one__activity_date__gte=goalset.active_date, 
+            complete=True).count()
+        datesets_remaining = 60 - datesets_complete
 
         today = datetime.now().date()
         dates = Dateset.objects.filter(
@@ -82,7 +82,7 @@ def show_home(request):
                 # when there are no goals left, let the user know the set is complete
                 return HttpResponseRedirect('/goals/complete/')
 
-        context["datesets_complete"] = len(datesets_complete)
+        context["datesets_complete"] = datesets_complete
         context["datesets_remaining"] = datesets_remaining
 
         context["dates"] = dates
@@ -94,7 +94,7 @@ def show_home(request):
 
 
 @login_required
-def show_summary(request, id=None):
+def show_summary(request):
     """
     This method returns either:
     1) a summary of activity for a specific date set
@@ -102,43 +102,29 @@ def show_summary(request, id=None):
     """
     context = {}
 
-    if id:
-        # if an id is passed in, show the single date set summary
-        template_name = 'goal_summary.html'
-        try:
-            dateset = Dateset.objects.get(pk=id)
-            date_one = Date.objects.get(pk=dateset.date_one_id)
-            context['act_one'] = Activity.objects.filter(date=date_one.id)
-            date_two = Date.objects.get(pk=dateset.date_two_id)
-            context['act_two'] = Activity.objects.filter(date=date_two.id)
-            date_three = Date.objects.get(pk=dateset.date_three_id)
-            context['act_three'] = Activity.objects.filter(date=date_three.id)
-            date_four = Date.objects.get(pk=dateset.date_four_id)
-            context['act_four'] = Activity.objects.filter(date=date_four.id)
-        except ObjectDoesNotExist:
-            return HttpResponseRedirect('/')
+    # show the complete summary for the request user
+    template_name = 'summary.html'
+    try:
+        goalset = Goalset.objects.get(active_date__lte=datetime.now(),
+            complete_date__isnull=True, goal_one__user=request.user)
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect('/')
 
-    else:
-        # otherwise show the complete summary for the request user
-        template_name = 'summary.html'
-        try:
-            goalset = Goalset.objects.get(active_date__lte=datetime.now(),
-                complete_date__isnull=True, goal_one__user=request.user)
-        except ObjectDoesNotExist:
-            return HttpResponseRedirect('/')
+    if goalset:  # user has a goal set in progress
+        context['goalset'] = goalset
 
-        if goalset:  # user has a goal set in progress
-            context['goalset'] = goalset
+        datesets_total = Dateset.objects.filter(
+            date_one__goal__user=request.user, 
+            date_one__activity_date__gte=goalset.active_date).order_by('date_one__activity_date')
 
-            datesets_total = Dateset.objects.filter(
-                date_one__goal__user=request.user).order_by('date_one__activity_date')
-            datesets_complete = Dateset.objects.filter(
-                date_one__goal__user=request.user, complete=True)
-            ## TODO: fix these querysets - pulling date records from previous versions for a goal id
+        datesets_complete = Dateset.objects.filter(
+            date_one__goal__user=request.user, 
+            date_one__activity_date__gte=goalset.active_date,  
+            complete=True).count()
 
-            context["datesets"] = datesets_total
-            context["percent_complete"] = 100 * float(len(
-                datesets_complete)) / float(len(datesets_total))
+        context["datesets"] = datesets_total
+        context["percent_complete"] = 100 * float(
+            datesets_complete) / float(len(datesets_total))
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
@@ -168,8 +154,10 @@ def show_complete(request):
         return HttpResponseRedirect('/')
     else:
         datesets_complete = Dateset.objects.filter(
-            date_one__goal__user=request.user, complete=True)
-        datesets_remaining = 60 - len(datesets_complete)
+            date_one__goal__user=request.user, 
+            date_one__activity_date__gte=goalset.active_date,  
+            complete=True).count()
+        datesets_remaining = 60 - datesets_complete
         if datesets_remaining > 0:
             return HttpResponseRedirect('/')
         else:
@@ -237,14 +225,16 @@ def show_mobile(request):
     else: 
         # user has a goal set in progress
         datesets_complete = Dateset.objects.filter(
-            date_one__goal__user=request.user, complete=True)
-        datesets_remaining = 60 - len(datesets_complete)
+            date_one__goal__user=request.user, 
+            date_one__activity_date__gte=goalset.active_date,  
+            complete=True).count()
+        datesets_remaining = 60 - datesets_complete
         datesets_total = Dateset.objects.filter(
             date_one__goal__user=request.user).order_by('date_one__activity_date')
         context["datesets"] = datesets_total
-        context["percent_complete"] = 100 * float(len(
-            datesets_complete)) / float(len(datesets_total))
-        context["datesets_complete"] = len(datesets_complete)
+        context["percent_complete"] = 100 * float(
+            datesets_complete) / float(len(datesets_total))
+        context["datesets_complete"] = datesets_complete
         context["datesets_remaining"] = datesets_remaining
 
         today = datetime.now().date()

@@ -20,12 +20,12 @@
 .date_goal_add { margin: 10px; }
 .date_goal_activities { margin: 10px; }
 
-.sum_label { font-weight: bold; text-align: right; font-size: 16px; }
+.sum_label { font-weight: bold; text-align: right; font-size: 14px; }
 .sum_week_label { width: 50px; }
 .sum_day_label { width: 50px; }
 .sum_date_label { padding: 2px; }
 .sum_goal_label { width: 100px; padding-right: 10px; }
-.sum { text-align: center; font-size: 14px; }
+.sum { font-size: 14px; }
 td.stretch { padding: 0px; width: 15px; }
 .progfill { background-color: blue; width: 100%; }
 
