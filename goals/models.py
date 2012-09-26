@@ -55,7 +55,7 @@ class Date(models.Model):
     goal = models.ForeignKey(Goal)
     week = models.IntegerField()
     day = models.IntegerField()
-    activity_date = models.DateTimeField(null=False, blank=False, editable=False)
+    activity_date = models.DateField(null=False, blank=False, editable=False)
 
     def __unicode__(self):
         return u"%s" % (self.goal.name)
